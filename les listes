@@ -1,0 +1,466 @@
+ Program finalfinal;
+Uses Wincrt ;
+Type
+   t =  ^enr ;
+   enr =  Record
+      name:  string;
+      s:  t;
+   End;
+Var
+   head,p,q,x:  t;
+   n,i:  Integer;
+   s:  string;
+
+Procedure insererelement(Var head,k:t);
+Var
+   x:  t;
+Begin
+   new(x);
+   x^.name := k^.Name;
+   x^.s := Nil;
+   If head=Nil Then head := x
+   Else If head^.s=Nil Then
+           Begin
+              If head^.name>x^.name Then {insertion au debut d'un liste de 1 element}
+                 Begin
+                    x^.s := head;
+                    head := x;
+                 End
+              Else {insertion a la fin d'un liste de 1 element}
+                 Begin
+                    head^.s := x;
+                 End;
+           End
+   Else If head^.name>x^.name Then {insertion au debut d'un liste }
+           Begin
+              x^.s := head;
+              head := x;
+           End
+   Else
+      Begin
+         k := head;
+         While (k^.s^.name<x^.name) And (k^.s<>Nil) Do
+ k := k^.s;
+         If k^.s=Nil Then k^.s := x
+         Else
+            Begin
+               x^.s := k^.s;
+               k^.s := x;
+            End;
+      End;
+End;
+
+Procedure insereelementpoint(Var head,p:t);
+Var
+   k:  t;
+Begin
+   While p<>Nil Do
+      Begin
+
+         insererelement(head,k);
+         p := p^.s;
+      End;
+End;
+
+Procedure remplit(Var head:t; n:Integer);
+Var
+   p,q:  t;
+   i:  Integer;
+Begin
+   If n=0 Then head := Nil
+   Else
+      Begin
+         For i:=1 To n Do
+            Begin
+               new(p);
+               write('entrer le : ',i,'------> element : ');
+               Readln(p^.name);
+               p^.s := Nil;
+               If i=1 Then
+                  Begin
+                     head := p;
+                     q := p;
+                  End
+               Else
+                  Begin
+                     q^.s := p;
+                     q := q^.s;
+                  End;
+            End;
+      End;
+End;
+
+Procedure show(head:t);
+Var
+   p:  t;
+   i:  Integer;
+Begin
+   p := head;
+   i := 0;
+   If p=Nil Then Writeln(' liste est vide ')
+   Else
+      Begin
+         While p<>Nil Do
+            Begin
+               i := i+1;
+               Writeln(i,'-------->',p^.name);
+               p := p^.s;
+            End;
+      End;
+End;
+
+Procedure addlast( Var head:t; s:String);
+Var
+   p,x:  t;
+Begin
+   p := head;
+   new(x);
+   x^.name := s;
+   x^.s := Nil;
+   If head=Nil Then head := x
+   Else
+      Begin
+         While p^.s<>Nil Do
+            p := p^.s;
+         p^.s := x;
+      End;
+End;
+
+Procedure suplast(Var head:t);
+Var
+   p:  t;
+Begin
+   p := head;
+   If p<>Nil Then
+      Begin
+         If p^.s=Nil Then
+            Begin
+               dispose(head) ;
+               head := Nil;
+            End
+         Else
+            Begin
+               While p^.s^.s<>Nil Do
+                  p := p^.s;
+               dispose(p^.s);
+               p^.s := Nil;
+            End;
+      End;
+End;
+
+Procedure addfirst(Var head:t; s:String);
+Var
+   p,x:  t;
+Begin
+   new(x);
+   x^.Name := s;
+   x^.s := Nil;
+   If head=Nil Then head := x
+   Else
+      Begin
+         x^.s := head;
+         head := x;
+      End;
+End;
+
+Procedure supfirst(Var head:t);
+Var
+   p:  t;
+Begin
+   If head<>Nil Then
+      Begin
+         p := head;
+         head := head^.s;
+         dispose(p);
+      End;
+End;
+
+Procedure inserrang(Var head:t; rg:Integer; s:String);
+Var
+   i:  Integer;
+   p,x:  t;
+Begin
+   new(x);
+   x^.name := s;
+   x^.s := Nil;
+   If head=Nil Then If rg=1 Then head := x
+   Else
+   Else If rg=1 Then
+           Begin
+              x^.s := head;
+              head := x;
+           End
+   Else
+      Begin
+         i := 1;
+         p := head;
+         While (rg-1>i) And (p^.s<>Nil) Do
+            Begin
+               i := i+1;
+               p := p^.s;
+            End;
+         If rg-1=i Then
+            Begin
+               x^.s := p^.s;
+               p^.s := x;
+            End;
+      End;
+End;
+
+Procedure suprang(Var head:t;rg:Integer);
+Var
+   i:  Integer;
+   p,x:  t;
+Begin
+   If head<>Nil Then If rg=1 Then
+                        Begin
+                           x := head;
+                           head := head^.s;
+                           dispose(x);
+                        End
+   Else
+      Begin
+         i := 1;
+         p := head;
+         While ( i<rg-1 ) And (p^.s<>Nil) Do
+            Begin
+               i := i+1;
+               p := p^.s;
+            End;
+         If (i=rg-1 )And (p^.s<>Nil) Then
+            Begin
+               x := p^.s;
+               p^.s := x^.s;
+               dispose(x);
+            End;
+      End;
+End;
+
+Procedure trib(Var head:t);
+Var
+   j,k,stop:  t;
+   x:  string;
+Begin
+   stop := Nil;
+   If (head<>Nil) And (head^.s<>Nil) Then While stop<>head Do
+                                             Begin
+                                                j := head;
+                                                While j<>stop Do
+                                                   Begin
+                                                      If j^.s<>Nil Then If j^.name>j^.s^.name Then
+                                                                           Begin
+                                                                              x := j^.s^.name ;
+                                                                              j^.s^.name := j^. name
+                                                                              ;
+                                                                              j^.name := x;
+                                                                           End;
+                                                      k := j;
+                                                      j := j^.s;
+                                                   End;
+                                                stop := k;
+                                             End;
+End;
+
+Procedure tribparpoint(Var head:t);
+Var
+   i,j,stop,prev,x:  t;
+   k:  Integer;
+Begin
+   stop := Nil;
+   i := head;
+
+   If head<>Nil Then While i^.s<>Nil Do
+                        Begin
+                           j := head;
+                           k := 0;
+   prev := head;
+                           While j^.s<>stop Do
+                              Begin
+                                 If j^.name>j^.s^.name Then
+                                    Begin
+                                             x := j^.s;
+                                             j^.s := x^.s;
+                                             x^.s := j;
+ 
+                      if k>0 then prev^.s:=x;
+                                    End;
+prev:=j;
+                                 k := k+1;
+                                 j := j^.s;
+                              End;
+                           stop := j;
+                           i := i^.s;
+                        End;
+End; {procedure insers liste au debut d''un liste}
+
+Procedure inserdebut(Var l1,l2:t);
+Var
+   p:  t;
+Begin
+   If l1=Nil Then l1 := l2
+   Else If l2<>Nil Then
+           Begin
+              p := l2;
+              While p^.s<>Nil Do
+                 p := p^.s;
+              p^.s := l1;
+              l1 := l2;
+           End;
+End; {procedure insers liste au fin d''un liste}
+
+Procedure inserfin(Var l1:t; l2:t);
+Var
+   p:  t;
+Begin
+   If l1=Nil Then l1 := l2
+   Else If l2<>Nil Then
+           Begin
+              p := l1;
+              While p^.s<>Nil Do
+                 p := p^.s;
+              p^.s := l2;
+           End;
+End;
+
+Procedure invers(Var head:t);
+Var
+   p,x,stop:  t;
+   k:  String;
+Begin
+   If head<>Nil Then
+      Begin
+         p := head;
+         stop := Nil;
+         x := Nil;
+         If head^.s<>Nil Then While (x<>p) Do
+                                 Begin
+                                    x := head;
+                                    While x^.s<>stop Do
+                                       x := x^.s;
+                                    stop := x;
+                                    k := p^.name;
+                                    p^.name := x^.name;
+                                    x^.name := k;
+                                    p := p^.s;
+                                    If x^.s=p Then p := x;
+                                 End;
+      End;
+End;
+
+Procedure inserlistrang(Var head,q:t; rg:Integer);
+Var
+   p,x:  t;
+   i:  Integer;
+Begin
+   If head=Nil Then If rg=1 Then head := q
+   Else
+   Else If rg=1 Then inserdebut(head,q)
+   Else
+      Begin
+         Writeln('*/*/*/');
+         i := 1;
+         p := head;
+         While (p^.s<>Nil) And( rg-1>i) Do
+            Begin
+               i := i+1;
+               p := p^.s;
+            End;
+         If rg-1=i Then
+            Begin
+               If p^.s=Nil Then p^.s := q
+               Else
+                  Begin
+                     x := p^.s;
+                     p^.s := q;
+                     While q^.s<>Nil Do
+                        q := q^.s;
+                     q^.s := x;
+                  End;
+            End;
+      End;
+End;
+
+
+
+Procedure permuter(Var avant,premier,deuxieme:t);
+Var
+   X,j:  T;
+   ss:  string;
+Begin
+   If avant<>Nil Then
+      Begin
+         Avant^.s := deuxieme;
+         If deuxieme^.s<>Nil Then premier^.s := deuxieme^.s
+         Else premier^.s := Nil;
+         deuxieme^.s := premier;
+      End
+   Else
+      Begin
+         premier^.s := deuxieme^.s;
+         deuxieme^.s := premier;
+         head := deuxieme;
+      End;
+End;
+
+
+
+Procedure TRI(Var P:T);
+Var
+   J,de,pre,deux,x:  T;
+   encore:  Boolean;
+Begin
+   If P<>Nil Then If P^.s<>Nil Then
+                     Begin
+                        encore := False;
+                        While Not encore Do
+                           Begin
+                              J := P;
+                              de := Nil;
+                              encore := True;
+                              While J^.s<>Nil Do
+                                 Begin
+                                    If J^.name>J^.s^.name Then
+                                       Begin
+                                          encore := False;
+                                          pre := j;
+                                          deux := j^.s;
+                                          permuter(de,pre,deux);
+de:=j^.s;
+                                          j := deux;
+
+
+
+ {encore := False;
+                                          pre := j;
+                                          deux := j^.s;
+                                          permuter(de,pre,deux);
+                                          de := deux;
+                                          pre := pre;
+                                          deux := pre^.s;
+                                          j := pre;}
+                                       End
+                                       
+                                    Else
+                                       Begin
+                                          de := j;
+                                          j := j^.s
+                                       End
+                                 End;
+                           End
+                     End;
+End;
+
+
+
+
+Begin
+ 
+   Writeln('.................................');
+   write(' entrer n ');
+   Readln(n);
+   remplit(head,n);
+tri(head);
+   show(head);
+   Writeln('.................................');
+ 
+End. { il reste pemettant les pointeur et le dernier exercice}
