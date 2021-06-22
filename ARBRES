@@ -1,0 +1,156 @@
+Program arbres;
+Uses Wincrt;
+Type
+  arb = ^en;
+  en = Record
+    name : Integer;
+    g,d : arb;
+  End;
+Var
+  n: Integer;
+Procedure rempliarbre(Var r:arb;s:Integer);
+Begin
+  If r=Nil Then
+    Begin
+      new(r);
+      r^.name := s;
+      r^.g := Nil;
+      r^.d := Nil;
+    End
+  Else If s>r^.Name Then rempliarbre(r^.d,s)
+  Else rempliarbre(r^.g,s);
+End;
+Procedure affichier(r:arb);
+//infix
+Begin
+  If r<>Nil Then
+    Begin
+      affichier(r^.g);
+      Writeln(r^.name);
+      affichier(r^.d);
+    End;
+End;
+Function neud(r:arb): Integer;
+Begin
+  If r=Nil Then neud := 0
+  Else neud := 1+neud(r^.g)+neud(r^.d);
+End;
+Function TR(r:arb; s:Integer): Boolean;
+//de simoh      car cette arbre c'est pas un arbre binaire de recherche
+Begin
+  If r=Nil Then TR := False
+  Else If r^.Name=s Then TR := True
+  Else If (TR(r^.g,s)=False) Then TR := TR(r^.g,s)
+  Else TR := TR(r^.d,s) ;
+End;
+//                ???? ??????? - ???? ???????
+Function trouve(r:arb; s:Integer): Boolean;
+Begin
+  If r=Nil Then trouve := False
+  Else
+    If r^.Name=s Then trouve := True
+  Else
+    If r^.name>s Then trouve := trouve(r^.g,s)
+  Else trouve := trouve(r^.d,s)
+End;
+Function occ(r:arb; s:Integer): Integer;
+Begin
+  If r=Nil Then occ := 0
+  Else
+    If r^.name=s Then occ := 1+occ(r^.g,s)+occ(r^.d,s)
+  Else occ := occ(r^.g,s)+occ(r^.d,s)
+End;
+Function feille(r:arb): Integer;
+Begin
+  If r<>Nil Then
+    If (r^.g=Nil) And( r^.d=Nil) Then feille := 1
+  Else
+    feille := feille(r^.g)+feille(r^.d);
+End;
+Procedure inserer(Var r:arb; s:Integer);
+// c'est comme remplit
+Begin
+  If r=Nil Then
+    Begin
+      new(r);
+      r^.Name := s;
+      r^.g := Nil;
+      r^.d := Nil;
+    End
+  Else If r^.Name>s Then inserer(r^.g,s)
+  Else inserer(r^.d,s);
+End;
+Function max(r:arb): Integer;
+Begin
+  If r^.d=Nil Then max := r^.Name
+  Else max := max(r^.d);
+End;
+Function min(r:arb): Integer;
+Begin
+  If r^.d=Nil Then min := r^.Name
+  Else min := min(r^.d);
+End;
+
+{
+function profondeur(r:arb):integer;               //calculer combien de niveau dans note arbre
+function Max(a,b:integer):integer;
+Begin
+if a>b then max:=a else max:=b ;
+end;
+Begin
+if r=nil then niveau:=0 else
+niveau:=1+max(niveau(r^.g),niveau(r^.d));
+
+end;
+
+}
+
+{Function niveau(r:arb; s:integer):Integer;
+ Begin
+
+if r=nil then   profondeur:=-1 else
+Begin
+if r^.Name=s then profondeur:=1 else
+if s>r^.Name then profondeur:=1+profondeur(r^.d,s) else profondeur:=1+profondeur(r^.g,s) ;
+
+  end;
+ end;
+}
+Procedure completer(Var r:arb; s:Integer);
+Begin
+  If r<>Nil Then
+    If ( r^.d=Nil) And (r^.g<>Nil )Then //completer a droite
+      Begin
+        new(r^.d);
+        r^.d^.Name := s;
+        r^.d^.g := Nil;
+        r^.d^.d := Nil;
+        completer(r^.g,s);
+      End
+  Else If (r^.d<>Nil) And (r^.g=Nil ) Then //completer a gauche
+         Begin
+           new(r^.g);
+           r^.g^.Name := s;
+           r^.g^.g := Nil;
+           r^.g^.d := Nil;
+           completer(r^.d,s);
+         End
+  Else
+    Begin
+      completer(r^.g,s);
+      completer(r^.d,s);
+    End;
+End;
+Var
+  i,j: Integer;
+  r: arb;
+Begin
+  For i:=1 To 7 Do
+    Begin
+      Write(' entrer la valeur : ');
+      Readln(n);
+      rempliarbre(r,n);
+    End;
+  completer(r,0);
+  affichier(r);
+End.
